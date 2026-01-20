@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Backend API Test</title>
+</head>
+
+<body>
+    <h1>Testing Backend API</h1>
+    <button onclick="testBackend()">Test Backend Connection</button>
+    <pre id="result"></pre>
+
+    <script>
+        async function testBackend() {
+            const result = document.getElementById('result');
+            result.textContent = 'Testing...\n';
+
+            // Test 1: Backend reachability
+            try {
+                result.textContent += '\n1. Testing backend at: https://www.suriyainvoicegenerator.in\n';
+                const response = await fetch('https://www.suriyainvoicegenerator.in/health', {
+                    method: 'GET',
+                });
+                result.textContent += `   Status: ${response.status}\n`;
+                result.textContent += `   OK: ${response.ok}\n`;
+            } catch (error) {
+                result.textContent += `   Error: ${error.message}\n`;
+            }
+
+            // Test 2: API endpoint
+            try {
+                result.textContent += '\n2. Testing API endpoint: /api/auth/register\n';
+                const response = await fetch('https://www.suriyainvoicegenerator.in/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: 'test@test.com',
+                        password: 'test123',
+                        name: 'Test'
+                    })
+                });
+                const data = await response.json();
+                result.textContent += `   Status: ${response.status}\n`;
+                result.textContent += `   Response: ${JSON.stringify(data, null, 2)}\n`;
+            } catch (error) {
+                result.textContent += `   Error: ${error.message}\n`;
+            }
+        }
+    </script>
+</body>
+
+</html>
