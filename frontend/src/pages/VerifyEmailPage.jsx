@@ -26,7 +26,9 @@ export default function VerifyEmailPage() {
             setMessage(response.data.message || 'Email verified successfully!');
         } catch (error) {
             setStatus('error');
-            setMessage(error.response?.data?.error || 'Verification failed. Please try again.');
+            const errorMsg = error.response?.data?.error || error.message || 'Verification failed. Please try again.';
+            setMessage(errorMsg);
+            console.error('Verification error:', error);
         }
     };
 
