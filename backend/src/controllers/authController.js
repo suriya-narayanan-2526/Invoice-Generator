@@ -8,7 +8,7 @@ import { sendVerificationEmail, sendPasswordResetEmail } from '../services/email
 // Register new user
 export async function register(req, res, next) {
     try {
-        console.log('📝 Registration attempt:', req.body);
+        console.log('📝 Registration attempt:', req.body.email);
 
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -19,60 +19,70 @@ export async function register(req, res, next) {
         const { email, password, name } = req.body;
         const db = await getWrappedDb();
 
-        console.log('🔍 Checking for existing user...');
+        console.log('🔍 Checking for existing user:', email);
 
         // Check if user already exists
         const existingUser = await db.get('SELECT id FROM users WHERE email = $1', [email]);
         if (existingUser) {
-            console.log('❌ User already exists');
+            console.log('❌ User already exists:', email);
             return res.status(409).json({ error: 'Email already registered' });
         }
 
-        console.log('✅ User does not exist, proceeding with registration...');
+        console.log('✅ User does not exist, hashing password...');
 
         // Hash password
         const passwordHash = await bcrypt.hash(password, 10);
 
         // Create user
         const userId = uuidv4();
+        console.log('🔄 Inserting user into database...');
         await db.run(
             `INSERT INTO users (id, email, password, name)
-       VALUES ($1, $2, $3, $4)
-       RETURNING id`,
+       VALUES ($1, $2, $3, $4)`,
             [userId, email, passwordHash, name]
         );
+        console.log('✅ User created with ID:', userId);
 
         // Create free subscription
         const subscriptionId = uuidv4();
+        console.log('🔄 Creating subscription for user...');
         await db.run(
             `INSERT INTO subscriptions (id, user_id, plan_type, status)
-       VALUES ($1, $2, 'free', 'active')
-       RETURNING id`,
+       VALUES ($1, $2, 'free', 'active')`,
             [subscriptionId, userId]
         );
+        console.log('✅ Subscription created');
 
         // Generate verification token
         const token = uuidv4();
         const expiresAt = new Date();
         expiresAt.setHours(expiresAt.getHours() + 24); // 24 hours
 
+        console.log('🔄 Creating verification token...');
         await db.run(
             `INSERT INTO email_verification_tokens (id, user_id, token, expires_at)
-       VALUES ($1, $2, $3, $4)
-       RETURNING id`,
+       VALUES ($1, $2, $3, $4)`,
             [uuidv4(), userId, token, expiresAt]
         );
+        console.log('✅ Token created');
 
         // Send verification email
+        console.log('🔄 Sending verification email to:', email);
         await sendVerificationEmail(email, token);
+        console.log('✅ Verification email sent');
 
         res.status(201).json({
             message: 'Registration successful! Please check your email to verify your account.',
             userId
         });
     } catch (error) {
-        console.error('❌ Registration error:', error);
-        next(error);
+        console.error('❌ Detailed registration error:', error);
+        // Include more error info if available
+        if (error.code) console.error('   Error Code:', error.code);
+        if (error.detail) console.error('   Error Detail:', error.detail);
+
+        // Don't leak DB errors to frontend normally, but for now we might want to return something more useful
+        res.status(500).json({ error: 'Registration failed. ' + (error.message || 'Please try again.') });
     }
 }
 
