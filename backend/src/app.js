@@ -22,7 +22,9 @@ const allowedOrigins = [
     'http://localhost:5173',
     'http://localhost:5174',
     'https://suriya-invoice-generator.web.app',
-    'https://suriya-invoice-generator.firebaseapp.com'
+    'https://suriya-invoice-generator.firebaseapp.com',
+    'https://suriyainvoicegenerator.in',
+    'https://www.suriyainvoicegenerator.in'
 ];
 
 if (process.env.FRONTEND_URL) {
