@@ -1,19 +1,37 @@
 import { Resend } from 'resend';
 
-const resend = process.env.EMAIL_MODE === 'resend' ? new Resend(process.env.RESEND_API_KEY) : null;
+let resendClient = null;
+
+const getResendClient = () => {
+  const mode = (process.env.EMAIL_MODE || '').trim();
+  if (!resendClient && mode === 'resend') {
+    const apiKey = (process.env.RESEND_API_KEY || '').trim();
+    if (!apiKey) {
+      console.error('❌ RESEND_API_KEY is missing or empty');
+      return null;
+    }
+    resendClient = new Resend(apiKey);
+    console.log('✅ Resend client initialized');
+  }
+  return resendClient;
+};
 
 export async function sendEmail({ to, subject, html, text }) {
-  const emailMode = process.env.EMAIL_MODE || 'console';
+  const emailMode = (process.env.EMAIL_MODE || 'console').trim();
+  const client = getResendClient();
 
-  if (emailMode === 'resend' && resend) {
+  if (emailMode === 'resend' && client) {
+    console.log('📡 Calling Resend API...');
     try {
-      const { data, error } = await resend.emails.send({
+      const { data, error } = await client.emails.send({
         from: process.env.EMAIL_FROM || 'onboarding@resend.dev',
         to: [to],
         subject: subject,
         html: html,
         text: text || html.replace(/<[^>]*>/g, '')
       });
+
+      console.log('📡 Resend API call completed. Data:', !!data, 'Error:', !!error);
 
       if (error) {
         console.error('❌ Resend error:', error);
