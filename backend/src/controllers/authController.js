@@ -80,8 +80,10 @@ export async function register(req, res, next) {
 export async function verifyEmail(req, res, next) {
     try {
         const { token } = req.query;
+        console.log('🧪 Verification attempt with token:', token);
 
         if (!token) {
+            console.log('❌ Token missing in request');
             return res.status(400).json({ error: 'Verification token required' });
         }
 
@@ -94,22 +96,31 @@ export async function verifyEmail(req, res, next) {
         );
 
         if (!tokenRecord) {
+            console.log('❌ Token not found in database:', token);
             return res.status(400).json({ error: 'Invalid verification token' });
         }
 
+        console.log('🔍 Found token record for user:', tokenRecord.user_id);
+        console.log('📅 Token expires at:', tokenRecord.expires_at);
+
         // Check if expired
         if (new Date(tokenRecord.expires_at) < new Date()) {
+            console.log('❌ Token expired');
             return res.status(400).json({ error: 'Verification token expired' });
         }
 
         // Update user
+        console.log('🔄 Updating user status to verified...');
         await db.run('UPDATE users SET email_verified = true WHERE id = $1', [tokenRecord.user_id]);
 
         // Delete token
+        console.log('🗑️ Deleting used verification token...');
         await db.run('DELETE FROM email_verification_tokens WHERE token = $1', [token]);
 
+        console.log('✅ Email verified successfully for user:', tokenRecord.user_id);
         res.json({ message: 'Email verified successfully! You can now log in.' });
     } catch (error) {
+        console.error('❌ Verification controller error:', error);
         next(error);
     }
 }
