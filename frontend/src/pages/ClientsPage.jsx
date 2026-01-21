@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Search, Edit, Trash2, Mail, Phone, MapPin, Building2, X } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Mail, Phone, MapPin, Building2, X, AlertTriangle } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import { clientApi, invoiceApi } from '../services/apiService';
 import Toast from '../components/Toast';
@@ -266,6 +266,22 @@ export default function ClientsPage() {
                         </div>
 
                         <form onSubmit={handleSubmit} className="p-6">
+                            {/* Client Limit Warning */}
+                            {!editingClient && stats && stats.remainingClients !== undefined && stats.remainingClients <= 0 && (
+                                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
+                                    <AlertTriangle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
+                                    <div>
+                                        <h4 className="font-semibold text-red-800">Client Limit Reached</h4>
+                                        <p className="text-sm text-red-600 mt-1">
+                                            You've reached the maximum number of clients for your {stats.planType || 'free'} plan.
+                                            Please upgrade your subscription to add more clients.
+                                        </p>
+                                        <a href="/subscription" className="text-sm font-medium text-red-700 underline mt-2 inline-block">
+                                            Upgrade Now →
+                                        </a>
+                                    </div>
+                                </div>
+                            )}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="md:col-span-2">
                                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -387,7 +403,11 @@ export default function ClientsPage() {
                                 >
                                     Cancel
                                 </button>
-                                <button type="submit" className="flex-1 btn btn-primary">
+                                <button
+                                    type="submit"
+                                    className="flex-1 btn btn-primary"
+                                    disabled={!editingClient && stats && stats.remainingClients !== undefined && stats.remainingClients <= 0}
+                                >
                                     {editingClient ? 'Update Client' : 'Add Client'}
                                 </button>
                             </div>
