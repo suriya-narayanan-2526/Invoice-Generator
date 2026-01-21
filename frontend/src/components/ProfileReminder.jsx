@@ -38,8 +38,11 @@ export default function ProfileReminder({ user }) {
 
         setMissingFields(missing);
 
+        // Use a user-specific key so each user gets their own reminder state
+        const reminderKey = `dismissedProfileReminder_${user.id}`;
+        const hasDismissed = sessionStorage.getItem(reminderKey);
+
         // Show dialog if fields are missing and user hasn't dismissed it this session
-        const hasDismissed = sessionStorage.getItem('dismissedProfileReminder');
         if (missing.length > 0 && !hasDismissed) {
             setIsOpen(true);
         }
@@ -47,7 +50,9 @@ export default function ProfileReminder({ user }) {
 
     const handleDismiss = () => {
         setIsOpen(false);
-        sessionStorage.setItem('dismissedProfileReminder', 'true');
+        const reminderKey = `dismissedProfileReminder_${user.id}`;
+        sessionStorage.setItem(reminderKey, 'true');
+
     };
 
     if (!isOpen || missingFields.length === 0) return null;
