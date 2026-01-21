@@ -26,15 +26,11 @@ export default function ProfileReminder({ user }) {
             missing.push('Bank Details');
         }
 
-        // Check Business Terms
-        if (!hasContent(user.terms_conditions)) {
-            missing.push('Terms & Conditions');
-        }
-
         // Check Notes
         if (!hasContent(user.default_notes)) {
             missing.push('Default Notes');
         }
+
 
         setMissingFields(missing);
 
