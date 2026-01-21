@@ -343,11 +343,12 @@ export default function InvoiceCreatePage() {
                                     </button>
                                 </div>
 
-                                <div className="space-y-3">
+                                <div className="space-y-4">
                                     {items.map((item, index) => (
-                                        <div key={index} className="p-3 bg-gray-50 rounded-lg space-y-2">
-                                            <div className="flex gap-2 items-start">
-                                                <div className="w-40">
+                                        <div key={index} className="p-4 bg-gray-50 rounded-lg border border-gray-100">
+                                            <div className="grid grid-cols-2 md:grid-cols-12 gap-3 items-end">
+                                                <div className="col-span-2 md:col-span-3">
+                                                    <label className="block text-xs font-medium text-gray-500 mb-1 md:hidden">Item Name</label>
                                                     <input
                                                         type="text"
                                                         placeholder="Item Name *"
@@ -356,7 +357,8 @@ export default function InvoiceCreatePage() {
                                                         onChange={(e) => updateItem(index, 'name', e.target.value)}
                                                     />
                                                 </div>
-                                                <div className="flex-1">
+                                                <div className="col-span-2 md:col-span-4">
+                                                    <label className="block text-xs font-medium text-gray-500 mb-1 md:hidden">Description</label>
                                                     <input
                                                         type="text"
                                                         placeholder="Description (optional)"
@@ -365,42 +367,47 @@ export default function InvoiceCreatePage() {
                                                         onChange={(e) => updateItem(index, 'description', e.target.value)}
                                                     />
                                                 </div>
-                                                <div className="w-20">
+                                                <div className="col-span-1 md:col-span-1">
+                                                    <label className="block text-xs font-medium text-gray-500 mb-1 md:hidden">Qty</label>
                                                     <input
                                                         type="number"
                                                         placeholder="Qty"
                                                         min="1"
-                                                        className="input text-center"
+                                                        className="input text-center px-1"
                                                         value={item.quantity}
                                                         onChange={(e) => updateItem(index, 'quantity', parseInt(e.target.value) || 0)}
                                                     />
                                                 </div>
-                                                <div className="w-28">
+                                                <div className="col-span-1 md:col-span-2">
+                                                    <label className="block text-xs font-medium text-gray-500 mb-1 md:hidden">Rate</label>
                                                     <input
                                                         type="number"
                                                         placeholder="Rate"
                                                         min="0"
                                                         step="0.01"
-                                                        className="input text-right"
+                                                        className="input text-right px-2"
                                                         value={item.rate}
                                                         onChange={(e) => updateItem(index, 'rate', parseFloat(e.target.value) || 0)}
                                                     />
                                                 </div>
-                                                <div className="w-28">
-                                                    <input
-                                                        type="text"
-                                                        className="input bg-white text-right font-medium"
-                                                        value={`₹${(item.quantity * item.rate).toFixed(2)}`}
-                                                        readOnly
-                                                    />
+                                                <div className="col-span-2 md:col-span-2 flex items-center gap-2">
+                                                    <div className="flex-1">
+                                                        <label className="block text-xs font-medium text-gray-500 mb-1 md:hidden">Amount</label>
+                                                        <input
+                                                            type="text"
+                                                            className="input bg-white text-right font-medium"
+                                                            value={`₹${(item.quantity * item.rate).toFixed(2)}`}
+                                                            readOnly
+                                                        />
+                                                    </div>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => removeItem(index)}
+                                                        className="p-2 text-red-600 hover:bg-red-100 rounded-lg flex-shrink-0"
+                                                    >
+                                                        <Trash2 className="h-5 w-5" />
+                                                    </button>
                                                 </div>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => removeItem(index)}
-                                                    className="p-2 text-red-600 hover:bg-red-100 rounded-lg"
-                                                >
-                                                    <Trash2 className="h-5 w-5" />
-                                                </button>
                                             </div>
                                         </div>
                                     ))}
@@ -505,20 +512,20 @@ export default function InvoiceCreatePage() {
                             </div>
 
                             {/* Action Buttons */}
-                            <div className="flex justify-between pt-4 border-t border-gray-200">
+                            <div className="flex flex-col md:flex-row gap-4 md:justify-between pt-6 border-t border-gray-200">
                                 <button
                                     type="button"
                                     onClick={() => setShowPreview(!showPreview)}
-                                    className="btn btn-outline flex items-center space-x-2"
+                                    className="btn btn-outline flex items-center justify-center space-x-2 w-full md:w-auto"
                                 >
                                     {showPreview ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                                     <span>{showPreview ? 'Hide Preview' : 'Show Preview'}</span>
                                 </button>
-                                <div className="flex space-x-3">
+                                <div className="grid grid-cols-2 md:flex gap-3">
                                     <button
                                         type="button"
                                         onClick={() => navigate('/invoices')}
-                                        className="btn btn-secondary"
+                                        className="btn btn-secondary w-full md:w-auto"
                                         disabled={loading}
                                     >
                                         Cancel
@@ -526,20 +533,20 @@ export default function InvoiceCreatePage() {
                                     <button
                                         type="button"
                                         onClick={() => handleSubmit(false)}
-                                        className="btn btn-outline flex items-center space-x-2"
+                                        className="btn btn-outline flex items-center justify-center space-x-2 w-full md:w-auto"
                                         disabled={loading}
                                     >
                                         <Save className="h-5 w-5" />
-                                        <span>Save as Draft</span>
+                                        <span className="whitespace-nowrap">Draft</span>
                                     </button>
                                     <button
                                         type="button"
                                         onClick={() => handleSubmit(true)}
-                                        className="btn btn-primary flex items-center space-x-2"
+                                        className="col-span-2 btn btn-primary flex items-center justify-center space-x-2 w-full md:w-auto"
                                         disabled={loading}
                                     >
                                         <Send className="h-5 w-5" />
-                                        <span>{loading ? 'Creating...' : 'Create & Finalize'}</span>
+                                        <span className="whitespace-nowrap">{loading ? 'Creating...' : 'Finalize'}</span>
                                     </button>
                                 </div>
                             </div>

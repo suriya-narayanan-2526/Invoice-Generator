@@ -88,16 +88,16 @@ export default function LandingPage() {
             <nav className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
                 <div className="container-custom">
                     <div className="flex justify-between items-center h-16">
-                        <div className="flex items-center space-x-2">
-                            <FileText className="h-8 w-8 text-primary-600" />
-                            <span className="text-xl font-bold text-gray-900">Invoice Generator</span>
+                        <div className="flex items-center space-x-2 flex-shrink">
+                            <FileText className="h-6 w-6 md:h-8 md:w-8 text-primary-600 flex-shrink-0" />
+                            <span className="text-lg md:text-xl font-bold text-gray-900 truncate">Invoice Gen</span>
                         </div>
-                        <div className="flex items-center space-x-4">
-                            <Link to="/login" className="btn btn-outline">
+                        <div className="flex items-center space-x-2 md:space-x-4">
+                            <Link to="/login" className="btn btn-outline text-sm md:text-base px-3 md:px-4 py-1.5 md:py-2">
                                 Login
                             </Link>
-                            <Link to="/register" className="btn btn-primary">
-                                Sign Up Free
+                            <Link to="/register" className="btn btn-primary text-sm md:text-base px-3 md:px-4 py-1.5 md:py-2 whitespace-nowrap">
+                                Sign Up
                             </Link>
                         </div>
                     </div>
@@ -107,7 +107,7 @@ export default function LandingPage() {
             {/* Hero Section */}
             <section className="py-20 px-4">
                 <div className="container-custom text-center">
-                    <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 animate-fade-in">
+                    <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 animate-fade-in">
                         Professional Invoicing
                         <br />
                         <span className="text-primary-600">Made Simple</span>
@@ -178,8 +178,8 @@ export default function LandingPage() {
                             <div
                                 key={index}
                                 className={`card ${plan.highlighted
-                                        ? 'border-2 border-primary-600 shadow-xl scale-105'
-                                        : ''
+                                    ? 'border-2 border-primary-600 shadow-xl scale-105'
+                                    : ''
                                     }`}
                             >
                                 {plan.highlighted && (
@@ -218,15 +218,15 @@ export default function LandingPage() {
             </section>
 
             {/* CTA Section */}
-            <section className="py-20 px-4 bg-gradient-to-r from-primary-600 to-blue-700 text-white">
+            <section className="py-16 md:py-20 px-4 bg-gradient-to-r from-primary-600 to-blue-700 text-white">
                 <div className="container-custom text-center">
-                    <h2 className="text-4xl font-bold mb-6">
+                    <h2 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">
                         Ready to Get Started?
                     </h2>
-                    <p className="text-xl mb-8 opacity-90">
+                    <p className="text-lg md:text-xl mb-8 opacity-90">
                         Join thousands of freelancers and small businesses using Invoice Generator
                     </p>
-                    <Link to="/register" className="btn bg-white text-primary-600 hover:bg-gray-100 text-lg px-8 py-3">
+                    <Link to="/register" className="w-full sm:w-auto btn bg-white text-primary-600 hover:bg-gray-100 text-lg px-8 py-3">
                         Create Your Free Account
                     </Link>
                 </div>
