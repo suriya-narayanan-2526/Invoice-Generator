@@ -90,7 +90,7 @@ export default function InvoiceViewPage() {
             <div className="container-custom py-8">
                 <div className="max-w-4xl mx-auto">
                     {/* Header */}
-                    <div className="flex items-center justify-between mb-6">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
                         <button
                             onClick={() => navigate('/invoices')}
                             className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
@@ -102,7 +102,7 @@ export default function InvoiceViewPage() {
                             {invoice.status !== 'draft' && (
                                 <button onClick={downloadPDF} className="btn btn-primary flex items-center space-x-2">
                                     <Download className="h-5 w-5" />
-                                    <span>Download PDF</span>
+                                    <span className="hidden sm:inline">Download</span> <span>PDF</span>
                                 </button>
                             )}
                         </div>
@@ -112,14 +112,14 @@ export default function InvoiceViewPage() {
                     <div className="card">
                         {/* Invoice Header */}
                         <div className="border-b border-gray-200 pb-6 mb-6">
-                            <div className="flex justify-between items-start">
+                            <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
                                 <div>
-                                    <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
                                         {invoice.invoice_number}
                                     </h1>
                                     {getStatusBadge(invoice.status)}
                                 </div>
-                                <div className="text-right">
+                                <div className="text-left sm:text-right">
                                     <p className="text-sm text-gray-600">Invoice Date</p>
                                     <p className="font-semibold">{new Date(invoice.invoice_date).toLocaleDateString('en-IN')}</p>
                                     <p className="text-sm text-gray-600 mt-2">Due Date</p>
@@ -143,59 +143,61 @@ export default function InvoiceViewPage() {
                         </div>
 
                         {/* Line Items */}
-                        <div className="mb-6">
-                            <table className="w-full">
-                                <thead className="bg-gray-50 border-y border-gray-200">
-                                    <tr>
-                                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Description</th>
-                                        <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700">Qty</th>
-                                        <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700">Rate</th>
-                                        <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700">Amount</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-gray-200">
-                                    {invoice.items && invoice.items.map((item, index) => (
-                                        <tr key={index}>
-                                            <td className="px-4 py-3 text-sm text-gray-900">{item.description}</td>
-                                            <td className="px-4 py-3 text-sm text-gray-600 text-right">{item.quantity}</td>
-                                            <td className="px-4 py-3 text-sm text-gray-600 text-right">₹{parseFloat(item.rate).toFixed(2)}</td>
-                                            <td className="px-4 py-3 text-sm font-medium text-gray-900 text-right">
-                                                ₹{parseFloat(item.amount).toFixed(2)}
-                                            </td>
+                        <div className="mb-6 overflow-x-auto -mx-4 sm:-mx-0">
+                            <div className="min-w-[500px] px-4 sm:px-0">
+                                <table className="w-full">
+                                    <thead className="bg-gray-50 border-y border-gray-200">
+                                        <tr>
+                                            <th className="px-3 py-3 text-left text-xs sm:text-sm font-semibold text-gray-700">Description</th>
+                                            <th className="px-3 py-3 text-right text-xs sm:text-sm font-semibold text-gray-700 w-16">Qty</th>
+                                            <th className="px-3 py-3 text-right text-xs sm:text-sm font-semibold text-gray-700 w-24">Rate</th>
+                                            <th className="px-3 py-3 text-right text-xs sm:text-sm font-semibold text-gray-700 w-28">Amount</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-200">
+                                        {invoice.items && invoice.items.map((item, index) => (
+                                            <tr key={index}>
+                                                <td className="px-3 py-3 text-xs sm:text-sm text-gray-900">{item.description}</td>
+                                                <td className="px-3 py-3 text-xs sm:text-sm text-gray-600 text-right">{item.quantity}</td>
+                                                <td className="px-3 py-3 text-xs sm:text-sm text-gray-600 text-right whitespace-nowrap">₹{parseFloat(item.rate).toLocaleString('en-IN')}</td>
+                                                <td className="px-3 py-3 text-xs sm:text-sm font-medium text-gray-900 text-right whitespace-nowrap">
+                                                    ₹{parseFloat(item.amount).toLocaleString('en-IN')}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
 
                         {/* Totals */}
                         <div className="flex justify-end">
-                            <div className="w-64 space-y-2">
+                            <div className="w-full sm:w-64 space-y-2">
                                 <div className="flex justify-between text-sm">
                                     <span className="text-gray-600">Subtotal:</span>
-                                    <span className="font-medium">₹{parseFloat(invoice.subtotal || 0).toFixed(2)}</span>
+                                    <span className="font-medium">₹{parseFloat(invoice.subtotal || 0).toLocaleString('en-IN')}</span>
                                 </div>
                                 {parseFloat(invoice.cgst || 0) > 0 && (
                                     <>
                                         <div className="flex justify-between text-sm">
                                             <span className="text-gray-600">CGST ({((parseFloat(invoice.cgst) / parseFloat(invoice.subtotal)) * 100).toFixed(1)}%):</span>
-                                            <span className="font-medium">₹{parseFloat(invoice.cgst).toFixed(2)}</span>
+                                            <span className="font-medium">₹{parseFloat(invoice.cgst).toLocaleString('en-IN')}</span>
                                         </div>
                                         <div className="flex justify-between text-sm">
                                             <span className="text-gray-600">SGST ({((parseFloat(invoice.sgst) / parseFloat(invoice.subtotal)) * 100).toFixed(1)}%):</span>
-                                            <span className="font-medium">₹{parseFloat(invoice.sgst).toFixed(2)}</span>
+                                            <span className="font-medium">₹{parseFloat(invoice.sgst).toLocaleString('en-IN')}</span>
                                         </div>
                                     </>
                                 )}
                                 {parseFloat(invoice.igst || 0) > 0 && (
                                     <div className="flex justify-between text-sm">
                                         <span className="text-gray-600">IGST ({((parseFloat(invoice.igst) / parseFloat(invoice.subtotal)) * 100).toFixed(1)}%):</span>
-                                        <span className="font-medium">₹{parseFloat(invoice.igst).toFixed(2)}</span>
+                                        <span className="font-medium">₹{parseFloat(invoice.igst).toLocaleString('en-IN')}</span>
                                     </div>
                                 )}
-                                <div className="flex justify-between text-lg font-bold border-t border-gray-300 pt-2">
+                                <div className="flex justify-between text-base sm:text-lg font-bold border-t border-gray-300 pt-2">
                                     <span>Total:</span>
-                                    <span className="text-primary-600">₹{parseFloat(invoice.total || 0).toFixed(2)}</span>
+                                    <span className="text-primary-600">₹{parseFloat(invoice.total || 0).toLocaleString('en-IN')}</span>
                                 </div>
                             </div>
                         </div>
