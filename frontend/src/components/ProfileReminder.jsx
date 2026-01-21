@@ -13,21 +13,26 @@ export default function ProfileReminder({ user }) {
         }
     }, [user]);
 
+    // Helper function to check if a field has actual content
+    const hasContent = (value) => {
+        return value && typeof value === 'string' && value.trim().length > 0;
+    };
+
     const checkProfileCompleteness = () => {
         const missing = [];
 
-        // Check Payment Details
-        if (!user.bank_name || !user.account_number || !user.ifsc_code) {
+        // Check Payment Details - all three must be filled
+        if (!hasContent(user.bank_name) || !hasContent(user.account_number) || !hasContent(user.ifsc_code)) {
             missing.push('Bank Details');
         }
 
         // Check Business Terms
-        if (!user.terms_conditions) {
+        if (!hasContent(user.terms_conditions)) {
             missing.push('Terms & Conditions');
         }
 
         // Check Notes
-        if (!user.default_notes) {
+        if (!hasContent(user.default_notes)) {
             missing.push('Default Notes');
         }
 
