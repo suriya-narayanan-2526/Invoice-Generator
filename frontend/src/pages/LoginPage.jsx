@@ -1,14 +1,20 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Toast from '../components/Toast';
 
 export default function LoginPage() {
     const navigate = useNavigate();
-    const { login } = useAuth();
+    const { login, isAuthenticated, loading: authLoading } = useAuth();
     const [formData, setFormData] = useState({ email: '', password: '' });
     const [loading, setLoading] = useState(false);
     const [toast, setToast] = useState(null);
+
+    useEffect(() => {
+        if (!authLoading && isAuthenticated) {
+            navigate('/dashboard');
+        }
+    }, [isAuthenticated, authLoading, navigate]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();

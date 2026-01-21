@@ -2,14 +2,16 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FileText, Users, TrendingUp, Plus, DollarSign, Clock, Eye } from 'lucide-react';
 import Navbar from '../components/Navbar';
-import { invoiceApi } from '../services/apiService';
+import { invoiceApi, userApi } from '../services/apiService';
 import Toast from '../components/Toast';
+import ProfileReminder from '../components/ProfileReminder';
 
 export default function DashboardPage() {
     const [stats, setStats] = useState(null);
     const [recentInvoices, setRecentInvoices] = useState([]);
     const [loading, setLoading] = useState(true);
     const [toast, setToast] = useState(null);
+    const [userProfile, setUserProfile] = useState(null);
 
     useEffect(() => {
         loadDashboardData();
@@ -17,12 +19,14 @@ export default function DashboardPage() {
 
     const loadDashboardData = async () => {
         try {
-            const [statsRes, invoicesRes] = await Promise.all([
+            const [statsRes, invoicesRes, profileRes] = await Promise.all([
                 invoiceApi.getStats(),
-                invoiceApi.getInvoices({ limit: 5 })
+                invoiceApi.getInvoices({ limit: 5 }),
+                userApi.getProfile()
             ]);
             setStats(statsRes.data);
             setRecentInvoices(invoicesRes.data.invoices || []);
+            setUserProfile(profileRes.data);
         } catch (error) {
             setToast({ message: 'Failed to load dashboard data', type: 'error' });
         } finally {
@@ -59,6 +63,7 @@ export default function DashboardPage() {
         <div className="min-h-screen bg-gray-50">
             <Navbar />
             {toast && <Toast {...toast} onClose={() => setToast(null)} />}
+            {userProfile && <ProfileReminder user={userProfile} />}
 
             <div className="container-custom py-8">
                 {/* Header */}

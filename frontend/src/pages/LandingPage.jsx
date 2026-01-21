@@ -1,7 +1,18 @@
-import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { FileText, Check, Zap, Shield, TrendingUp, Users } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 export default function LandingPage() {
+    const { isAuthenticated, loading } = useAuth();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!loading && isAuthenticated) {
+            navigate('/dashboard');
+        }
+    }, [isAuthenticated, loading, navigate]);
+
     const features = [
         {
             icon: FileText,
@@ -226,7 +237,7 @@ export default function LandingPage() {
                     <p className="text-lg md:text-xl mb-8 opacity-90">
                         Join thousands of freelancers and small businesses using Invoice Generator
                     </p>
-                    <Link to="/register" className="w-full sm:w-auto btn bg-white text-primary-600 hover:bg-gray-100 text-lg px-8 py-3">
+                    <Link to="/register" className="w-full sm:w-auto btn bg-white text-primary-600 hover:bg-gray-100 text-base md:text-lg px-4 md:px-8 py-3 inline-block">
                         Create Your Free Account
                     </Link>
                 </div>
